@@ -1,0 +1,260 @@
+Allgemein:
+  - group: Browser
+    packages:
+      - id: Microsoft.Edge
+        name: Microsoft Edge
+        scope: machine
+        elevated: false
+      - id: Microsoft.Edge.Beta
+        name: Microsoft Edge Beta
+        scope: machine
+        elevated: true
+      - id: Microsoft.Edge.Dev
+        name: Microsoft Edge Dev
+        scope: machine
+        elevated: true
+      - id: Google.Chrome
+        name: Google Chrome
+        scope: machine
+        elevated: true
+      - id: Vivaldi.Vivaldi
+        name: Vivaldi
+        scope: machine
+        elevated: false
+      - id: Brave.Brave
+        name: Brave
+        scope: machine
+        elevated: false
+      - id: Mozilla.Firefox.de
+        name: Mozilla Firefox
+        scope: machine
+        elevated: true
+
+  - group: Office
+    packages:
+      - id: Microsoft.Office
+        name: Microsoft 365 Apps
+        scope: machine
+        elevated: true
+      - id: Microsoft.Teams
+        name: Microsoft Teams
+        scope: machine
+        elevated: true
+      - id: Microsoft.OneDrive
+        name: OneDrive
+        scope: machine
+        elevated: true
+      - id: Adobe.Acrobat.Reader.32-bit
+        name: Adobe Acrobat Reader
+        scope: machine
+        elevated: true
+
+  - group: Tools & Utility
+    packages:
+      - id: 7zip.7zip
+        name: 7-Zip
+        scope: machine
+        elevated: true
+      - id: Greenshot.Greenshot
+        name: Greenshot
+        scope: user
+        elevated: false
+
+Erweitert:
+  - group: System
+    packages:
+      - id: Microsoft.PowerToys
+        name: PowerToys
+        scope: user
+        elevated: false
+      - id: Microsoft.Sysinternals.Suite
+        name: Sysinternals
+        scope: user
+        elevated: false
+      - id: JAMSoftware.TreeSize.Free
+        name: TreeSize Free
+        scope: user
+        elevated: false
+      - id: voidtools.Everything
+        name: Everything
+        scope: user
+        elevated: false
+      - id: Microsoft.WindowsApp
+        name: winget
+        scope: machine
+        elevated: true
+      - id: gerardog.gsudo
+        name: gsudo
+        scope: machine
+        elevated: false
+
+  - group: Key Vaults
+    packages:
+      - id: Bitwarden.Bitwarden
+        name: Bitwarden
+        scope: user
+        elevated: false
+      - id: DominikReichl.KeePass
+        name: Keepass
+        scope: user
+        elevated: false
+
+Entwicklungsumgebung:
+  - group: Entwicklung
+    packages:
+      - id: Microsoft.WindowsTerminal
+        name: Windows Terminal
+        scope: user
+        elevated: false
+      - id: Microsoft.VisualStudioCode
+        name: Visual Studio Code
+        scope: user
+        elevated: false
+      - id: Microsoft.PowerShell
+        name: PowerShell 7
+        scope: machine
+        elevated: false
+
+  - group: CLI
+    packages:
+      - id: Git.Git
+        name: Git for Windows
+        scope: machine
+        elevated: false
+      - id: GitHub.cli
+        name: GitHub CLI
+        scope: user
+        elevated: false
+      - id: Hashicorp.Terraform
+        name: Terraform
+        scope: user
+        elevated: false
+      - id: Python.Python.3.13
+        name: Python 3.13
+        scope: user
+        elevated: true
+      - id: Microsoft.AzureCLI
+        name: Azure CLI
+        scope: machine
+        elevated: true
+      - id: Microsoft.Azure.AZCopy.10
+        name: AzCopy v10
+        scope: user
+        elevated: false
+      - id: Microsoft.Edit
+        name: Microsoft Edit (Terminal-Texteditor)
+        scope: user
+        elevated: false
+
+  - group: WSL
+    packages:
+      - id: Microsoft.WSL
+        name: Windows-Subsystem für Linux
+        scope: user
+        elevated: false
+      - id: Debian.Debian
+        name: Debian
+        scope: user
+        elevated: false
+        note: "Registriert sich erst bei WSL nach dem ersten Start. Dazu 'debian.exe install --root' in einer Konsole ausführen."
+      - id: Canonical.Ubuntu
+        name: Ubuntu
+        scope: user
+        elevated: false
+        note: "Registriert sich erst bei WSL nach dem ersten Start. Dazu 'ubuntu.exe install --root' in einer Konsole ausführen."
+      - id: Docker.DockerDesktop
+        name: Docker Desktop
+        scope: machine
+        elevated: true
+        note: "Benötigt WSL"
+
+KI-Tools:
+  - group: KI
+    packages:
+      - id: Anthropic.ClaudeCode
+        name: Claude Code
+        scope: user
+        elevated: false
+      - id: Anthropic.Claude
+        name: Claude Desktop
+        scope: user
+        elevated: false
+      - id: SST.opencode
+        name: opencode
+        scope: user
+        elevated: true
+      - id: SST.OpenCodeDesktop
+        name: opencode Desktop
+        scope: user
+        elevated: true
+
+  - group: lokale LLM-Runtime
+    packages:
+      - id: Ollama.Ollama
+        name: Ollama
+        scope: user
+        elevated: false
+      - id: ElementLabs.LMStudio
+        name: LM Studio
+        scope: user
+        elevated: false
+        note: "Modell installieren: lms get qwen/qwen3.5-9b"
+
+Tools:
+  - group: Datenbanken & Tools
+    packages:
+      - id: Microsoft.Azure.StorageExplorer
+        name: Azure Storage Explorer
+        scope: user
+        elevated: false
+      - id: PostgreSQL.pgAdmin
+        name: pgAdmin 4
+        scope: user
+        elevated: false
+      - id: DevToys-app.DevToys
+        name: DevToys
+        scope: user
+        elevated: false
+      - id: Notepad++.Notepad++
+        name: Notepad++
+        scope: user
+        elevated: false
+      - id: Obsidian.Obsidian
+        name: Obsidian
+        scope: user
+        elevated: false
+
+  - group: Connections
+    packages:
+      - id: PuTTY.PuTTY
+        name: PuTTY
+        scope: user
+        elevated: false
+      - id: WinSCP.WinSCP
+        name: WinSCP
+        scope: user
+        elevated: false
+      - id: mRemoteNG.mRemoteNG
+        name: mRemoteNG
+        scope: machine
+        elevated: true
+      - id: uvncbvba.UltraVNC
+        name: UltraVNC
+        scope: machine
+        elevated: true
+
+  - group: unsortiert
+    packages:
+      - id: Oracle.VirtualBox
+        name: Oracle VirtualBox
+        scope: machine
+        elevated: true
+
+Unsortiert:
+  - group: sonstiges
+    packages:
+      - id: Microsoft.BingWallpaper
+        name: Bing Wallpaper
+        scope: user
+        elevated: false
+

@@ -1,0 +1,15 @@
+# Standardmäßig alles ignorieren, danach gezielt freigeben.
+*
+!*/
+
+# Root-Dateien
+!.gitignore
+!ExecutionPolicy.bat
+!Update-WindowsEnvironment.ps1
+!Update-SandboxEnvironment.ps1
+!Start-WindowsClientForge.ps1
+!window-state.json
+
+# Code und Projektdaten (rekursiv)
+!config/**
+!module/**

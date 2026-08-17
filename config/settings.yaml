@@ -1,0 +1,75 @@
+Windows-Einstellungen:
+  - group: Taskleiste
+    settings:
+      - id: chkSearch
+        name: Suchfeld ausblenden
+        path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Search
+        property: SearchboxTaskbarMode
+        value: 0
+        type: DWord
+      - id: chkTaskView
+        name: Taskansicht deaktivieren
+        path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+        property: ShowTaskViewButton
+        value: 0
+        type: DWord
+      - id: chkWidgets
+        name: Widgets deaktivieren
+        path: HKLM:\SOFTWARE\Policies\Microsoft\Dsh
+        property: AllowNewsAndInterests
+        value: 0
+        type: DWord
+      - id: chkChat
+        name: Chat-Symbol ausblenden
+        path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+        property: TaskbarMn
+        value: 0
+        type: DWord
+
+  - group: Explorer
+    settings:
+      - id: chkFileExt
+        name: Dateiendungen anzeigen
+        path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+        property: HideFileExt
+        value: 0
+        type: DWord
+      - id: chkHidden
+        name: Versteckte Dateien anzeigen
+        path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+        property: Hidden
+        value: 1
+        type: DWord
+      - id: chkFullPath
+        name: Vollständigen Pfad in Titelleiste anzeigen
+        path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\CabinetState
+        property: FullPath
+        value: 1
+        type: DWord
+      - id: chkThisPC
+        name: Explorer öffnet 'Dieser PC' statt 'Schnellzugriff'
+        path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+        property: LaunchTo
+        value: 1
+        type: DWord
+
+  - group: Datenschutz
+    settings:
+      - id: chkAdId
+        name: Werbe-ID deaktivieren
+        path: HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo
+        property: Enabled
+        value: 0
+        type: DWord
+      - id: chkTracking
+        name: Personalisierte Werbung deaktivieren
+        path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Privacy
+        property: TailoredExperiencesWithDiagnosticDataEnabled
+        value: 0
+        type: DWord
+
+  - group: Energieoptionen
+    settings:
+      - id: chkPower
+        name: Energiesparplan auf Höchstleistung
+        command: powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c

@@ -1,0 +1,107 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Windows Client Setup" Height="620" Width="720"
+        WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip">
+    <Window.Resources>
+        <SolidColorBrush x:Key="SwitchOnBrush" Color="#005A9E"/>
+        <SolidColorBrush x:Key="SwitchOffBrush" Color="#CCCCCC"/>
+        <SolidColorBrush x:Key="SwitchThumbBrush" Color="White"/>
+        <SolidColorBrush x:Key="SwitchDisabledBrush" Color="#E0E0E0"/>
+        <Style x:Key="SwitchCheckBox" TargetType="CheckBox">
+            <Setter Property="Margin" Value="0,3,0,3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal" Opacity="1">
+                            <Border x:Name="SwitchTrack" CornerRadius="11"
+                                    Background="{StaticResource SwitchOffBrush}"
+                                    Width="42" Height="22" Margin="0,0,10,0">
+                                <Border x:Name="SwitchThumb" CornerRadius="9"
+                                        Background="{StaticResource SwitchThumbBrush}"
+                                        Width="18" Height="18"
+                                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                                        Margin="2,0,0,0"/>
+                            </Border>
+                            <ContentPresenter x:Name="ContentSite" VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="SwitchTrack" Property="Background"
+                                        Value="{StaticResource SwitchOnBrush}"/>
+                                <Setter TargetName="SwitchThumb" Property="HorizontalAlignment"
+                                        Value="Right"/>
+                                <Setter TargetName="SwitchThumb" Property="Margin"
+                                        Value="0,0,2,0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="SwitchTrack" Property="Background"
+                                        Value="{StaticResource SwitchDisabledBrush}"/>
+                                <Setter TargetName="ContentSite" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="GroupBox">
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Windows Client Setup"
+                       FontSize="18" FontWeight="Bold" Margin="0,5,0,10" Foreground="#005A9E"/>
+            <TextBlock Grid.Column="1" Text="Rot = Administratorrechte erforderlich"
+                       VerticalAlignment="Center" Foreground="#DC3545" FontWeight="SemiBold" Margin="0,5,0,10"/>
+        </Grid>
+
+        <TabControl x:Name="tabMain" Grid.Row="1"/>
+
+        <StackPanel x:Name="statusPanel" Grid.Row="2" Margin="0,5,0,0">
+            <RichTextBox x:Name="txtStatus" IsReadOnly="True" Height="120"
+                         VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                         Background="#F5F5F5" BorderBrush="#CCCCCC"
+                         FontFamily="Consolas" FontSize="11">
+                <FlowDocument PagePadding="0"/>
+            </RichTextBox>
+        </StackPanel>
+
+        <Grid Grid.Row="3" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="txtAdminWarn" Grid.Column="0" Foreground="#DC3545" VerticalAlignment="Center"
+                       TextWrapping="Wrap"
+                       Text="Nicht als Administrator gestartet - eingeschränkter Funktionsumfang"
+                       Visibility="Collapsed"/>
+            <TextBlock x:Name="txtAdminOk" Grid.Column="0" Foreground="Green" VerticalAlignment="Center"
+                       TextWrapping="Wrap"
+                       Text="Als Administrator gestartet - voller Funktionsumfang"
+                       Visibility="Collapsed"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="btnRestartAsAdmin" Content="Als Admin neu starten" Width="150" Height="32" Margin="0,0,10,0"
+                        Background="#005A9E" Foreground="White" FontWeight="SemiBold"
+                        Visibility="Collapsed"/>
+                <Button x:Name="btnRestartAsUser" Content="Als Benutzer neu starten" Width="150" Height="32" Margin="0,0,10,0"
+                        Background="#005A9E" Foreground="White" FontWeight="SemiBold"
+                        Visibility="Collapsed"/>
+                <Button x:Name="btnExit" Content="Beenden" Width="100" Height="32"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
