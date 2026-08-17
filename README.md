@@ -6,9 +6,3 @@ Grafisches Werkzeug zur automatisierten Einrichtung eines neuen Windows Clients 
 - Konfiguration von Windows-Einstellungen – in Arbeit
 
 > Erfordert **PowerShell 7+** und Administrator-Rechte für vollen Funktionsumfang.
-
-## Direktaufruf
-
-```powershell
-irm https://raw.githubusercontent.com/dakazanak/WindowsClientSetup/master/Start-WindowsClientForge.ps1 | iex
-```
