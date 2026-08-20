@@ -8,7 +8,7 @@
 !Update-WindowsEnvironment.ps1
 !Update-SandboxEnvironment.ps1
 !Start-WindowsClientForge.ps1
-!window-state.json
+# !window-state.json
 !README.md
 
 # Code und Projektdaten (rekursiv)
