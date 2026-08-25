@@ -1,6 +1,6 @@
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Windows Client Setup" Height="620" Width="720"
+        Title="WSL Debian Setup" Height="620" Width="720"
         WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip">
     <Window.Resources>
         <SolidColorBrush x:Key="SwitchOnBrush" Color="#005A9E"/>
@@ -59,14 +59,13 @@
     <DockPanel>
         <Menu x:Name="mnuMain" DockPanel.Dock="Top" Style="{StaticResource AppMenu}">
             <MenuItem x:Name="mnuFile" Header="Datei">
-                <MenuItem x:Name="mnuStartWslDebian" Header="WSL Debian Setup öffnen"/>
+                <MenuItem x:Name="mnuStartWindowsSetup" Header="Windows Client Setup öffnen"/>
                 <Separator/>
-                <MenuItem x:Name="mnuRestartAsAdmin" Header="Als Admin neu starten"/>
-                <MenuItem x:Name="mnuRestartAsUser" Header="Als Benutzer neu starten"/>
+                <MenuItem x:Name="mnuSetPassword" Header="sudo-Passwort speichern"/>
                 <Separator/>
-                <MenuItem x:Name="mnuCreateShortcut" Header="Desktop-Verknüpfung erstellen"/>
+                <MenuItem x:Name="mnuInstallSelected" Header="Alle nicht-installierten installieren"/>
                 <Separator/>
-                <MenuItem x:Name="mnuExit" Header="Beenden"/>
+                <MenuItem x:Name="mnuBeenden" Header="Beenden"/>
             </MenuItem>
             <MenuItem x:Name="mnuAbout" Header="Über">
                 <MenuItem x:Name="mnuVersion" Header="Version"/>
@@ -85,10 +84,8 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Windows Client Setup"
+                <TextBlock Grid.Column="0" Text="WSL Debian Setup"
                            FontSize="18" FontWeight="Bold" Margin="0,5,0,10" Foreground="#005A9E"/>
-                <TextBlock Grid.Column="1" Text="Rot = Administratorrechte erforderlich"
-                           VerticalAlignment="Center" Foreground="#DC3545" FontWeight="SemiBold" Margin="0,5,0,10"/>
             </Grid>
 
             <TabControl x:Name="tabMain" Grid.Row="1"/>
@@ -103,18 +100,9 @@
             </StackPanel>
 
             <Grid Grid.Row="3" Margin="0,10,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock x:Name="txtAdminWarn" Grid.Column="0" Foreground="#DC3545" VerticalAlignment="Center"
-                           TextWrapping="Wrap"
-                           Text="Nicht als Administrator gestartet - eingeschränkter Funktionsumfang"
-                           Visibility="Collapsed"/>
-                <TextBlock x:Name="txtAdminOk" Grid.Column="0" Foreground="Green" VerticalAlignment="Center"
-                           TextWrapping="Wrap"
-                           Text="Als Administrator gestartet - voller Funktionsumfang"
-                           Visibility="Collapsed"/>
+                <TextBlock x:Name="txtPasswordHint" Foreground="#FFA500" VerticalAlignment="Center"
+                           TextWrapping="Wrap" FontWeight="SemiBold"
+                           Text="Kein sudo-Passwort gespeichert – Installation/Deinstallation nicht möglich. Menü: Datei → sudo-Passwort speichern"/>
             </Grid>
         </Grid>
     </DockPanel>

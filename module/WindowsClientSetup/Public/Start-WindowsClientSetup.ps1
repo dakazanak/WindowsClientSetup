@@ -213,6 +213,7 @@ function Start-WindowsClientSetup {
 
     $mnuRestartAsAdmin = $window.FindName('mnuRestartAsAdmin')
     $mnuRestartAsUser  = $window.FindName('mnuRestartAsUser')
+    $mnuStartWslDebian = $window.FindName('mnuStartWslDebian')
     $mnuCreateShortcut = $window.FindName('mnuCreateShortcut')
     $mnuExit           = $window.FindName('mnuExit')
     $mnuVersion        = $window.FindName('mnuVersion')
@@ -220,6 +221,18 @@ function Start-WindowsClientSetup {
     $txtAdminOk        = $window.FindName('txtAdminOk')
 
     $moduleVersion = $script:ModuleVersion
+
+    $mnuStartWslDebian.Add_Click({
+        $wslLauncher = Join-Path $DataPath 'Setup-WslDebian.ps1'
+        if (Test-Path $wslLauncher) {
+            Stop-Transcript | Out-Null
+            Save-WindowConfig
+            Start-Process pwsh -ArgumentList '-NoProfile', '-WindowStyle', 'Hidden', '-File', "`"$wslLauncher`""
+            $window.Close()
+        } else {
+            Add-StatusLine -Text "Setup-WslDebian.ps1 nicht gefunden." -Color '#DC3545'
+        }
+    })
 
     if ($isAdmin) {
         $txtAdminOk.Visibility = 'Visible'
@@ -252,7 +265,7 @@ function Start-WindowsClientSetup {
         Write-Log -Level 'INFO' -Message "Neustart als Administrator angefordert"
         Stop-Transcript | Out-Null
         Save-WindowConfig
-        Start-Process pwsh -Verb RunAs -ArgumentList '-NoProfile', '-File', "`"$ScriptPath`""
+        Start-Process pwsh -Verb RunAs -ArgumentList '-NoProfile', '-WindowStyle', 'Hidden', '-File', "`"$ScriptPath`""
         $window.Close()
     })
 
@@ -261,7 +274,7 @@ function Start-WindowsClientSetup {
         Stop-Transcript | Out-Null
         Save-WindowConfig
         $shell = New-Object -ComObject Shell.Application
-        $shell.ShellExecute('pwsh.exe', "-NoProfile -File `"$ScriptPath`"", $DataPath, 'open', 1)
+        $shell.ShellExecute('pwsh.exe', "-NoProfile -File `"$ScriptPath`"", $DataPath, 'open', 0)
         $window.Close()
     })
 

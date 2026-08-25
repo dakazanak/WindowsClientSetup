@@ -1,0 +1,128 @@
+Entwicklungsumgebung:
+  - group: Sprachen & Runtimes
+    packages:
+      - name: python3
+        description: Python 3
+        sudo: true
+      - name: python3-pip
+        description: Python Package Installer
+        sudo: true
+      - name: python3-venv
+        description: Python Virtual Environments
+        sudo: true
+
+  - group: GitHub CLI
+    packages:
+      - name: gh
+        description: GitHub CLI
+        sudo: true
+    setup_commands:
+      - "curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg"
+      - "sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg"
+      - 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null'
+      - "sudo apt-get update -qq"
+
+  - group: Terraform
+    packages:
+      - name: terraform
+        description: Terraform
+        sudo: true
+    setup_commands:
+      - "curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg"
+      - 'echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com trixie main" | sudo tee /etc/apt/sources.list.d/hashicorp.list'
+      - "sudo apt-get update -qq"
+
+  - group: Azure CLI
+    packages:
+      - name: azure-cli
+        description: Microsoft Azure CLI
+        sudo: true
+    setup_commands:
+      - "curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null"
+      - 'echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ bookworm main" | sudo tee /etc/apt/sources.list.d/azure-cli.list'
+      - "sudo apt-get update -qq"
+
+  - group: Python-Tools
+    packages:
+      - name: pipx
+        description: Python Application Runner
+        sudo: true
+    setup_commands:
+      - "pipx ensurepath || true"
+      - "export PATH=\"$HOME/.local/bin:$PATH\""
+      - "pipx install ansible-core"
+      - "pipx inject --include-apps ansible-core argcomplete"
+      - 'until pipx list --json | jq -e ".venvs.\"ansible-core\"" > /dev/null 2>&1; do sleep 1; done'
+      - "ansible-galaxy collection install community.general azure.azcollection"
+      - 'BASE_PATH=$(ansible-galaxy collection list --format json | jq -r ''to_entries[] | select(.value["azure.azcollection"]) | .key''); pipx runpip ansible-core install -r "$BASE_PATH/azure/azcollection/requirements.txt"'
+    uninstall_commands:
+      - "pipx uninstall ansible-core || true"
+      - "rm -rf ~/.cache/pipx 2>/dev/null; true"
+
+  - group: uv
+    packages:
+      - name: uv
+        description: Astral uv (Python Package Installer)
+        sudo: false
+    setup_commands:
+      - "curl -LsSf https://astral.sh/uv/install.sh | sh"
+    uninstall_commands:
+      - "rm -f ~/.local/bin/uv ~/.local/bin/uvx 2>/dev/null; true"
+      - "rm -rf ~/.local/share/uv 2>/dev/null; true"
+
+  - group: yq
+    packages:
+      - name: yq
+        description: Mike Farah yq (YAML-Prozessor)
+        sudo: true
+    setup_commands:
+      - "sudo wget -q https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq"
+      - "sudo chmod +x /usr/local/bin/yq"
+    uninstall_commands:
+      - "sudo rm -f /usr/local/bin/yq 2>/dev/null"
+
+Tools:
+  - group: Werkzeugkasten
+    packages:
+      - name: curl
+        description: curl
+        sudo: true
+      - name: wget
+        description: Wget
+        sudo: true
+      - name: unzip
+        description: Unzip
+        sudo: true
+      - name: gnupg
+        description: GnuPG
+        sudo: true
+      - name: ca-certificates
+        description: CA-Zertifikate
+        sudo: true
+      - name: lsb-release
+        description: LSB-Release-Infos
+        sudo: true
+      - name: apt-transport-https
+        description: APT über HTTPS
+        sudo: true
+      - name: git
+        description: Git
+        sudo: true
+      - name: openssh-client
+        description: OpenSSH Client
+        sudo: true
+      - name: bind9-dnsutils
+        description: DNS-Tools (dig, nslookup)
+        sudo: true
+      - name: tree
+        description: Verzeichnisbaum anzeigen
+        sudo: true
+      - name: jq
+        description: jq (JSON-Prozessor)
+        sudo: true
+      - name: nano
+        description: Nano
+        sudo: true
+      - name: mc
+        description: Midnight Commander
+        sudo: true

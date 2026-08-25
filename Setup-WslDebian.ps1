@@ -2,19 +2,20 @@
 
 <#
 .SYNOPSIS
-    Grafisches Werkzeug zur Einrichtung eines neuen Windows Clients.
+    Konsolenbasiertes Werkzeug zur Installation von apt-Paketen in WSL Debian.
 .DESCRIPTION
-    Duenner Launcher fuer das WindowsClientSetup-Modul (module\WindowsClientSetup).
+    Duenner Launcher fuer das WslDebianSetup-Modul.
 .NOTES
-    Erfordert PowerShell 7+ und Administrator-Rechte fuer vollen Funktionsumfang.
+    Erfordert PowerShell 7+ und eine WSL-Debian-Instanz.
 #>
 
 $scriptPath = $MyInvocation.MyCommand.Path
+if (-not $scriptPath) { $scriptPath = Join-Path $PSScriptRoot $MyInvocation.MyCommand.Name }
 $repoRoot = Split-Path -Parent $scriptPath
 
 Add-Type -Name Window -Namespace Console -MemberDefinition '[DllImport("Kernel32.dll")]public static extern IntPtr GetConsoleWindow();[DllImport("User32.dll")]public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);'
 $null = [Console.Window]::ShowWindow([Console.Window]::GetConsoleWindow(), 0)
 
-Import-Module (Join-Path $repoRoot 'module\WindowsClientSetup\WindowsClientSetup.psd1') -Force
+Import-Module (Join-Path $repoRoot 'module\WslDebianSetup\WslDebianSetup.psd1') -Force
 
-Start-WindowsClientSetup -ScriptPath $scriptPath
+Start-WslDebianSetup -DataPath $repoRoot
