@@ -211,19 +211,25 @@ function Start-WindowsClientSetup {
         [void]$tabMain.Items.Add($tabItem)
     }
 
-    $btnRestartAdmin = $window.FindName('btnRestartAsAdmin')
-    $btnRestartUser  = $window.FindName('btnRestartAsUser')
-    $btnExit         = $window.FindName('btnExit')
-    $txtAdminWarn    = $window.FindName('txtAdminWarn')
-    $txtAdminOk      = $window.FindName('txtAdminOk')
+    $mnuRestartAsAdmin = $window.FindName('mnuRestartAsAdmin')
+    $mnuRestartAsUser  = $window.FindName('mnuRestartAsUser')
+    $mnuCreateShortcut = $window.FindName('mnuCreateShortcut')
+    $mnuExit           = $window.FindName('mnuExit')
+    $mnuVersion        = $window.FindName('mnuVersion')
+    $txtAdminWarn      = $window.FindName('txtAdminWarn')
+    $txtAdminOk        = $window.FindName('txtAdminOk')
+
+    $moduleVersion = (Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\WindowsClientSetup.psd1')).ModuleVersion
 
     if ($isAdmin) {
         $txtAdminOk.Visibility = 'Visible'
-        $btnRestartUser.Visibility = 'Visible'
+        $mnuRestartAsUser.Visibility = 'Visible'
+        $mnuRestartAsAdmin.Visibility = 'Collapsed'
         Write-Log -Level 'INFO' -Message "Als Administrator gestartet"
     } else {
         $txtAdminWarn.Visibility = 'Visible'
-        $btnRestartAdmin.Visibility = 'Visible'
+        $mnuRestartAsAdmin.Visibility = 'Visible'
+        $mnuRestartAsUser.Visibility = 'Collapsed'
         Write-Log -Level 'WARN' -Message "Ohne Administrator-Rechte gestartet"
     }
 
@@ -236,7 +242,13 @@ function Start-WindowsClientSetup {
         } | ConvertTo-Json | Set-Content -Path $windowStatePath -Force
     }
 
-    $btnRestartAdmin.Add_Click({
+    function Stop-AndClose {
+        Stop-Transcript | Out-Null
+        Save-WindowConfig
+        $window.Close()
+    }
+
+    $mnuRestartAsAdmin.Add_Click({
         Write-Log -Level 'INFO' -Message "Neustart als Administrator angefordert"
         Stop-Transcript | Out-Null
         Save-WindowConfig
@@ -244,23 +256,35 @@ function Start-WindowsClientSetup {
         $window.Close()
     })
 
-    $btnRestartUser.Add_Click({
+    $mnuRestartAsUser.Add_Click({
         Write-Log -Level 'INFO' -Message "Neustart als Benutzer angefordert"
         Stop-Transcript | Out-Null
         Save-WindowConfig
-        # Ein elevierter Prozess kann sich nicht selbst de-elevieren; Start-Process wuerde die
-        # Adminrechte vererben. Der Umweg ueber Shell.Application laesst explorer.exe (laeuft immer
-        # mit dem normalen Benutzertoken) den neuen Prozess starten, wodurch dieser nicht elevated ist.
         $shell = New-Object -ComObject Shell.Application
         $shell.ShellExecute('pwsh.exe', "-NoProfile -File `"$ScriptPath`"", $DataPath, 'open', 1)
         $window.Close()
     })
 
-    $btnExit.Add_Click({
+    $mnuCreateShortcut.Add_Click({
+        $shortcutPath = [Environment]::GetFolderPath('Desktop') + '\Windows Client Setup.lnk'
+        $wshShell = New-Object -ComObject WScript.Shell
+        $shortcut = $wshShell.CreateShortcut($shortcutPath)
+        $shortcut.TargetPath = 'pwsh.exe'
+        $shortcut.Arguments = "-NoProfile -File `"$ScriptPath`""
+        $shortcut.WorkingDirectory = $DataPath
+        $shortcut.Description = 'Windows Client Setup'
+        $shortcut.Save()
+        Add-StatusLine -Text "Desktop-Verknüpfung erstellt: $shortcutPath" -Color '#28A745'
+        Write-Log -Level 'INFO' -Message "Desktop-Verknüpfung erstellt"
+    })
+
+    $mnuExit.Add_Click({
         Write-Log -Level 'INFO' -Message "Beenden geklickt"
-        Stop-Transcript | Out-Null
-        Save-WindowConfig
-        $window.Close()
+        Stop-AndClose
+    })
+
+    $mnuVersion.Add_Click({
+        [Windows.MessageBox]::Show("WindowsClientSetup v$moduleVersion", "Version", 'OK', 'Information') | Out-Null
     })
 
     Add-StatusLine -Text "Suche nach installierten Apps ..." -Color '#005A9E'

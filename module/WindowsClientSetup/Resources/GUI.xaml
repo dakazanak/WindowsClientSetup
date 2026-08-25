@@ -49,59 +49,71 @@
             <Setter Property="Padding" Value="10"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
+        <Style TargetType="Menu" x:Key="AppMenu">
+            <Setter Property="Background" Value="#F0F0F0"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
     </Window.Resources>
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <DockPanel>
+        <Menu x:Name="mnuMain" DockPanel.Dock="Top" Style="{StaticResource AppMenu}">
+            <MenuItem x:Name="mnuFile" Header="Datei">
+                <MenuItem x:Name="mnuRestartAsAdmin" Header="Als Admin neu starten"/>
+                <MenuItem x:Name="mnuRestartAsUser" Header="Als Benutzer neu starten"/>
+                <Separator/>
+                <MenuItem x:Name="mnuCreateShortcut" Header="Desktop-Verknüpfung erstellen"/>
+                <Separator/>
+                <MenuItem x:Name="mnuExit" Header="Beenden"/>
+            </MenuItem>
+            <MenuItem x:Name="mnuAbout" Header="Über">
+                <MenuItem x:Name="mnuVersion" Header="Version"/>
+            </MenuItem>
+        </Menu>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Windows Client Setup"
-                       FontSize="18" FontWeight="Bold" Margin="0,5,0,10" Foreground="#005A9E"/>
-            <TextBlock Grid.Column="1" Text="Rot = Administratorrechte erforderlich"
-                       VerticalAlignment="Center" Foreground="#DC3545" FontWeight="SemiBold" Margin="0,5,0,10"/>
-        </Grid>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Windows Client Setup"
+                           FontSize="18" FontWeight="Bold" Margin="0,5,0,10" Foreground="#005A9E"/>
+                <TextBlock Grid.Column="1" Text="Rot = Administratorrechte erforderlich"
+                           VerticalAlignment="Center" Foreground="#DC3545" FontWeight="SemiBold" Margin="0,5,0,10"/>
+            </Grid>
 
-        <TabControl x:Name="tabMain" Grid.Row="1"/>
+            <TabControl x:Name="tabMain" Grid.Row="1"/>
 
-        <StackPanel x:Name="statusPanel" Grid.Row="2" Margin="0,5,0,0">
-            <RichTextBox x:Name="txtStatus" IsReadOnly="True" Height="120"
-                         VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                         Background="#F5F5F5" BorderBrush="#CCCCCC"
-                         FontFamily="Consolas" FontSize="11">
-                <FlowDocument PagePadding="0"/>
-            </RichTextBox>
-        </StackPanel>
-
-        <Grid Grid.Row="3" Margin="0,10,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock x:Name="txtAdminWarn" Grid.Column="0" Foreground="#DC3545" VerticalAlignment="Center"
-                       TextWrapping="Wrap"
-                       Text="Nicht als Administrator gestartet - eingeschränkter Funktionsumfang"
-                       Visibility="Collapsed"/>
-            <TextBlock x:Name="txtAdminOk" Grid.Column="0" Foreground="Green" VerticalAlignment="Center"
-                       TextWrapping="Wrap"
-                       Text="Als Administrator gestartet - voller Funktionsumfang"
-                       Visibility="Collapsed"/>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Name="btnRestartAsAdmin" Content="Als Admin neu starten" Width="150" Height="32" Margin="0,0,10,0"
-                        Background="#005A9E" Foreground="White" FontWeight="SemiBold"
-                        Visibility="Collapsed"/>
-                <Button x:Name="btnRestartAsUser" Content="Als Benutzer neu starten" Width="150" Height="32" Margin="0,0,10,0"
-                        Background="#005A9E" Foreground="White" FontWeight="SemiBold"
-                        Visibility="Collapsed"/>
-                <Button x:Name="btnExit" Content="Beenden" Width="100" Height="32"/>
+            <StackPanel x:Name="statusPanel" Grid.Row="2" Margin="0,5,0,0">
+                <RichTextBox x:Name="txtStatus" IsReadOnly="True" Height="120"
+                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                             Background="#F5F5F5" BorderBrush="#CCCCCC"
+                             FontFamily="Consolas" FontSize="11">
+                    <FlowDocument PagePadding="0"/>
+                </RichTextBox>
             </StackPanel>
+
+            <Grid Grid.Row="3" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="txtAdminWarn" Grid.Column="0" Foreground="#DC3545" VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           Text="Nicht als Administrator gestartet - eingeschränkter Funktionsumfang"
+                           Visibility="Collapsed"/>
+                <TextBlock x:Name="txtAdminOk" Grid.Column="0" Foreground="Green" VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           Text="Als Administrator gestartet - voller Funktionsumfang"
+                           Visibility="Collapsed"/>
+            </Grid>
         </Grid>
-    </Grid>
+    </DockPanel>
 </Window>
