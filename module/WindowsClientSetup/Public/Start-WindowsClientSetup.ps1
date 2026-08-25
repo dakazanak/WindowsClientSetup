@@ -219,7 +219,7 @@ function Start-WindowsClientSetup {
     $txtAdminWarn      = $window.FindName('txtAdminWarn')
     $txtAdminOk        = $window.FindName('txtAdminOk')
 
-    $moduleVersion = (Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\WindowsClientSetup.psd1')).ModuleVersion
+    $moduleVersion = $script:ModuleVersion
 
     if ($isAdmin) {
         $txtAdminOk.Visibility = 'Visible'

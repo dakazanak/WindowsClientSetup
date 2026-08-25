@@ -10,6 +10,7 @@
 !Start-WindowsClientForge.ps1
 # !window-state.json
 !README.md
+!VERSION
 
 # Code und Projektdaten (rekursiv)
 !config/**

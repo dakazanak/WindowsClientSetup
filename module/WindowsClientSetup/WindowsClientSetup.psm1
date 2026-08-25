@@ -1,3 +1,10 @@
+$versionFile = Join-Path $PSScriptRoot '..\..\VERSION'
+if (Test-Path $versionFile) {
+    $script:ModuleVersion = (Get-Content $versionFile -Raw).Trim()
+} else {
+    $script:ModuleVersion = '0.0.0'
+}
+
 $bootstrapManifest = Join-Path $PSScriptRoot '..\EnvironmentBootstrap\EnvironmentBootstrap.psd1'
 Import-Module $bootstrapManifest -Force -Global
 
