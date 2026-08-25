@@ -168,10 +168,14 @@ Entwicklungsumgebung:
         elevated: true
         note: "Benötigt WSL"
       - id: RedHat.Podman
-        name: Podman
+        name: Podman CLI
         scope: machine
         elevated: true
         note: "Benötigt WSL:\n 1.) podman machine init – Linux-VM (WSL-basiert) initialisiert\n 2.) podman machine start\n 3.) [optional] podman pull docker.io/hashicorp/terraform-mcp-server"
+      - id: RedHat.Podman-Desktop
+        name: Podman Desktop
+        scope: machine
+        elevated: true
 
 KI-Tools:
   - group: KI
@@ -199,11 +203,12 @@ KI-Tools:
         name: Ollama
         scope: user
         elevated: false
+        note: "Modell installieren:\n - ollama pull gemma4:e4b\n - ollama pull gemma4:12b"
       - id: ElementLabs.LMStudio
         name: LM Studio
         scope: user
         elevated: false
-        note: "Modell installieren: lms get qwen/qwen3.5-9b"
+        note: "irm https://lmstudio.ai/install.ps1 | iex \n Modell installieren:\n lms get qwen/qwen3.5-9b"
 
 Tools:
   - group: Datenbanken & Tools

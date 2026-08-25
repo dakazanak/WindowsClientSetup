@@ -162,7 +162,39 @@ function Start-WindowsClientSetup {
                     }
                     $noteBtn.Add_Click({
                         param($sender, $e)
-                        [Windows.MessageBox]::Show($sender.Tag.Note, "Wichtiger Hinweis: $($sender.Tag.Name)", 'OK', 'Information') | Out-Null
+                        $noteWindow = [Windows.Window]@{
+                            Title = "Wichtiger Hinweis: $($sender.Tag.Name)"
+                            Width = 480
+                            Height = 300
+                            WindowStartupLocation = 'CenterOwner'
+                            Owner = $window
+                            ResizeMode = 'CanResizeWithGrip'
+                        }
+                        $noteGrid = [Windows.Controls.Grid]@{ Margin = [Windows.Thickness]'10' }
+                        $noteGrid.RowDefinitions.Add([Windows.Controls.RowDefinition]@{ Height = [Windows.GridLength]'*' })
+                        $noteGrid.RowDefinitions.Add([Windows.Controls.RowDefinition]@{ Height = [Windows.GridLength]'Auto' })
+                        $txtNote = [Windows.Controls.TextBox]@{
+                            Text = $sender.Tag.Note
+                            IsReadOnly = $true
+                            TextWrapping = 'Wrap'
+                            VerticalScrollBarVisibility = 'Auto'
+                            AcceptsReturn = $true
+                            FontFamily = 'Consolas'
+                            FontSize = 12
+                            Margin = [Windows.Thickness]'0,0,0,10'
+                        }
+                        $noteGrid.AddChild($txtNote)
+                        $btnClose = [Windows.Controls.Button]@{
+                            Content = 'Schließen'
+                            Width = 100
+                            Height = 30
+                            HorizontalAlignment = 'Right'
+                        }
+                        $btnClose.SetValue([Windows.Controls.Grid]::RowProperty, 1)
+                        $btnClose.Add_Click({ $noteWindow.Close() })
+                        $noteGrid.AddChild($btnClose)
+                        $noteWindow.Content = $noteGrid
+                        $noteWindow.ShowDialog() | Out-Null
                     })
                     $row.AddChild($noteBtn)
                 }
