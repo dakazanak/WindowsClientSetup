@@ -437,7 +437,7 @@ function Start-WslDebianSetup {
             $timer.Stop()
             Get-Job -Name "AptJob", "WslUpgradable" -ErrorAction SilentlyContinue | Stop-Job | Remove-Job
             Save-WindowConfig
-            Start-Process pwsh -ArgumentList '-NoProfile', '-WindowStyle', 'Hidden', '-File', "`"$winLauncher`""
+            Start-Process pwsh -ArgumentList '-NoProfile', '-File', "`"$winLauncher`""
             $window.Close()
         } else {
             Add-StatusLine -Text "Start-WindowsClientForge.ps1 nicht gefunden." -Color '#DC3545'

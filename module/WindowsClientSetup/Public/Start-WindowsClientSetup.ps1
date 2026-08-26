@@ -227,7 +227,7 @@ function Start-WindowsClientSetup {
         if (Test-Path $wslLauncher) {
             Stop-Transcript | Out-Null
             Save-WindowConfig
-            Start-Process pwsh -ArgumentList '-NoProfile', '-WindowStyle', 'Hidden', '-File', "`"$wslLauncher`""
+            Start-Process pwsh -ArgumentList '-NoProfile', '-File', "`"$wslLauncher`""
             $window.Close()
         } else {
             Add-StatusLine -Text "Setup-WslDebian.ps1 nicht gefunden." -Color '#DC3545'
@@ -265,7 +265,7 @@ function Start-WindowsClientSetup {
         Write-Log -Level 'INFO' -Message "Neustart als Administrator angefordert"
         Stop-Transcript | Out-Null
         Save-WindowConfig
-        Start-Process pwsh -Verb RunAs -ArgumentList '-NoProfile', '-WindowStyle', 'Hidden', '-File', "`"$ScriptPath`""
+        Start-Process pwsh -Verb RunAs -ArgumentList '-NoProfile', '-File', "`"$ScriptPath`""
         $window.Close()
     })
 

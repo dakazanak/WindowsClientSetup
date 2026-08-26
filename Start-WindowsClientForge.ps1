@@ -12,9 +12,6 @@
 $scriptPath = $MyInvocation.MyCommand.Path
 $repoRoot = Split-Path -Parent $scriptPath
 
-Add-Type -Name Window -Namespace Console -MemberDefinition '[DllImport("Kernel32.dll")]public static extern IntPtr GetConsoleWindow();[DllImport("User32.dll")]public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);'
-$null = [Console.Window]::ShowWindow([Console.Window]::GetConsoleWindow(), 0)
-
 Import-Module (Join-Path $repoRoot 'module\WindowsClientSetup\WindowsClientSetup.psd1') -Force
 
 Start-WindowsClientSetup -ScriptPath $scriptPath
