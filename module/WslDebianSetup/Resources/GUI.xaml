@@ -63,6 +63,8 @@
                 <Separator/>
                 <MenuItem x:Name="mnuSetPassword" Header="sudo-Passwort speichern"/>
                 <Separator/>
+                <MenuItem x:Name="mnuAptUpgrade" Header="apt upgrade ausführen"/>
+                <Separator/>
                 <MenuItem x:Name="mnuInstallSelected" Header="Alle nicht-installierten installieren"/>
                 <Separator/>
                 <MenuItem x:Name="mnuBeenden" Header="Beenden"/>

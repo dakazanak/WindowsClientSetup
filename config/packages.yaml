@@ -152,6 +152,7 @@ Entwicklungsumgebung:
         name: Windows-Subsystem für Linux
         scope: user
         elevated: true
+        note: "- dism.exe /online /get-featureinfo /featurename:Microsoft-Windows-Subsystem-Linux\n- dism.exe /online /get-featureinfo /featurename:VirtualMachinePlatform\n- dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart\n- dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart\nNeustart ggf. erforderlich"
       - id: Debian.Debian
         name: Debian
         scope: user

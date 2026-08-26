@@ -25,6 +25,7 @@ function Start-WslDebianSetup {
 
     Initialize-Logging -LogDirectory (Join-Path $DataPath 'logs')
     $logsDir = Join-Path $DataPath 'logs'
+    Start-Transcript -Path (Join-Path $logsDir 'session.log') -Append | Out-Null
     Write-Log -Level 'INFO' -Message "WSL-Debian verfuegbar. Starte GUI..."
 
     Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
@@ -49,6 +50,7 @@ function Start-WslDebianSetup {
     $mnuInstallSelected = $window.FindName('mnuInstallSelected')
     $mnuStartWindowsSetup = $window.FindName('mnuStartWindowsSetup')
     $mnuSetPassword = $window.FindName('mnuSetPassword')
+    $mnuAptUpgrade = $window.FindName('mnuAptUpgrade')
     $mnuBeenden = $window.FindName('mnuBeenden')
     $mnuVersion = $window.FindName('mnuVersion')
     $txtPasswordHint = $window.FindName('txtPasswordHint')
@@ -167,7 +169,7 @@ function Start-WslDebianSetup {
 
     Add-StatusLine -Text "$($installedSet.Count) installierte Pakete erkannt." -Color '#333333'
 
-    $binaryOnlySet = @{ 'uv' = $true; 'yq' = $true }
+    $binaryOnlySet = @{ 'uv' = $true; 'yq' = $true; 'pipx' = $true }
 
     foreach ($pkg in $allPackageItems) {
         $isInstalled = $installedSet.ContainsKey($pkg.Name) -or $binarySet.ContainsKey($pkg.Name)
@@ -421,6 +423,85 @@ function Start-WslDebianSetup {
         }
     }
 
+    function Show-AptUpgradeDialog {
+        $pwStatus = if ($script:sudoPassword) { "Gespeichert" } else { "Nicht gespeichert" }
+        $pwColor = if ($script:sudoPassword) { '#28A745' } else { '#DC3545' }
+
+        $dlg = [Windows.Window]@{
+            Title = 'apt upgrade'
+            Width = 400; Height = 200
+            WindowStartupLocation = 'CenterOwner'
+            Owner = $window
+            ResizeMode = 'NoResize'
+            WindowStyle = 'ToolWindow'
+        }
+        $dlgGrid = [Windows.Controls.Grid]@{ Margin = [Windows.Thickness]'10' }
+        $dlgGrid.RowDefinitions.Add([Windows.Controls.RowDefinition]@{ Height = [Windows.GridLength]'Auto' })
+        $dlgGrid.RowDefinitions.Add([Windows.Controls.RowDefinition]@{ Height = [Windows.GridLength]'Auto' })
+        $dlgGrid.RowDefinitions.Add([Windows.Controls.RowDefinition]@{ Height = [Windows.GridLength]'Auto' })
+
+        $pwLabel = [Windows.Controls.TextBlock]@{ Text = "sudo-Passwort: $pwStatus"; Foreground = $pwColor; FontWeight = 'SemiBold'; Margin = [Windows.Thickness]'0,0,0,10' }
+        $pwLabel.SetValue([Windows.Controls.Grid]::RowProperty, 0)
+        $dlgGrid.AddChild($pwLabel)
+
+        $upgradeBtn = [Windows.Controls.Button]@{ Content = 'apt upgrade ausführen'; Width = 180; Height = 30; Margin = [Windows.Thickness]'0,10,0,0' }
+        $upgradeBtn.SetValue([Windows.Controls.Grid]::RowProperty, 1)
+        $dlgGrid.AddChild($upgradeBtn)
+
+        $upgradeStatus = [Windows.Controls.TextBlock]@{ Text = ''; Margin = [Windows.Thickness]'0,5,0,0' }
+        $upgradeStatus.SetValue([Windows.Controls.Grid]::RowProperty, 2)
+        $dlgGrid.AddChild($upgradeStatus)
+
+        $upgradeBtn.Add_Click({
+            $upgradeBtn.IsEnabled = $false
+            $upgradeBtn.Content = '...'
+            $upgradeStatus.Text = 'apt update & upgrade läuft ...'
+            Write-Log -Level 'INFO' -Message "apt upgrade gestartet"
+            $upgradeLogFile = Join-Path $logsDir "apt-upgrade-$((Get-Date -Format 'yyyyMMdd-HHmmss')).log"
+            $pwB64 = if ($script:sudoPassword) { [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($script:sudoPassword)) } else { '' }
+            Start-Job -Name "AptUpgradeJob" -ScriptBlock {
+                param($PwB64, $LogPath)
+                if ($PwB64) {
+                    wsl -d Debian -- bash -c "echo $PwB64 | base64 -d | sudo -S bash -c 'apt-get update -y'" 2>&1 | Tee-Object -FilePath $LogPath | Out-Null
+                    wsl -d Debian -- bash -c "echo $PwB64 | base64 -d | sudo -S bash -c 'apt-get upgrade -y'" 2>&1 | Tee-Object -FilePath $LogPath -Append | Out-Null
+                } else {
+                    wsl -d Debian -- bash -c "sudo apt-get update -y" 2>&1 | Tee-Object -FilePath $LogPath | Out-Null
+                    wsl -d Debian -- bash -c "sudo apt-get upgrade -y" 2>&1 | Tee-Object -FilePath $LogPath -Append | Out-Null
+                }
+                @{ ExitCode = $LASTEXITCODE }
+            } -ArgumentList $pwB64, $upgradeLogFile | Out-Null
+
+            $script:upgradeDlgClosed = $false
+            $dlg.Add_Closing({ $script:upgradeDlgClosed = $true })
+
+            $script:upgradeTimer = [System.Windows.Threading.DispatcherTimer]::new()
+            $script:upgradeTimer.Interval = [TimeSpan]::FromMilliseconds(500)
+            $script:upgradeTimer.Add_Tick({
+                if ($script:upgradeDlgClosed) { $script:upgradeTimer.Stop(); return }
+                $j = Get-Job -Name "AptUpgradeJob" -ErrorAction SilentlyContinue
+                if ($j -and $j.State -eq 'Completed') {
+                    $r = Receive-Job -Name "AptUpgradeJob"
+                    Remove-Job -Name "AptUpgradeJob"
+                    $script:upgradeTimer.Stop()
+                    if ($r.ExitCode -eq 0) {
+                        $upgradeStatus.Text = 'apt upgrade erfolgreich abgeschlossen.'
+                        $upgradeStatus.Foreground = '#28A745'
+                        Write-Log -Level 'SUCCESS' -Message "apt upgrade erfolgreich"
+                    } else {
+                        $upgradeStatus.Text = 'Fehler beim apt upgrade.'
+                        $upgradeStatus.Foreground = '#DC3545'
+                        Write-Log -Level 'ERROR' -Message "apt upgrade fehlgeschlagen"
+                    }
+                    $upgradeBtn.Content = 'Fertig'
+                }
+            })
+            $script:upgradeTimer.Start()
+        })
+
+        $dlg.Content = $dlgGrid
+        [void]$dlg.ShowDialog()
+    }
+
     Update-ButtonStates
 
     $moduleVersion = $script:ModuleVersion
@@ -431,12 +512,15 @@ function Start-WslDebianSetup {
 
     $mnuSetPassword.Add_Click({ Show-PasswordDialog })
 
+    $mnuAptUpgrade.Add_Click({ Show-AptUpgradeDialog })
+
     $mnuStartWindowsSetup.Add_Click({
         $winLauncher = Join-Path $DataPath 'Start-WindowsClientForge.ps1'
         if (Test-Path $winLauncher) {
             $timer.Stop()
             Get-Job -Name "AptJob", "WslUpgradable" -ErrorAction SilentlyContinue | Stop-Job | Remove-Job
             Save-WindowConfig
+            Stop-Transcript | Out-Null
             Start-Process pwsh -ArgumentList '-NoProfile', '-File', "`"$winLauncher`""
             $window.Close()
         } else {
@@ -450,6 +534,7 @@ function Start-WslDebianSetup {
         $timer.Stop()
         Get-Job -Name "AptJob", "WslUpgradable" -ErrorAction SilentlyContinue | Stop-Job | Remove-Job
         Save-WindowConfig
+        Stop-Transcript | Out-Null
         $window.Close()
     })
 
@@ -458,6 +543,7 @@ function Start-WslDebianSetup {
         $timer.Stop()
         Get-Job -Name "AptJob", "WslUpgradable" -ErrorAction SilentlyContinue | Stop-Job | Remove-Job
         Save-WindowConfig
+        Stop-Transcript | Out-Null
     })
 
     Write-Log -Level 'INFO' -Message "GUI geoeffnet"
