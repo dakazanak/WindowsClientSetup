@@ -59,14 +59,17 @@
     <DockPanel>
         <Menu x:Name="mnuMain" DockPanel.Dock="Top" Style="{StaticResource AppMenu}">
             <MenuItem x:Name="mnuFile" Header="Datei">
-                <MenuItem x:Name="mnuStartWslDebian" Header="WSL Debian Setup öffnen"/>
-                <Separator/>
                 <MenuItem x:Name="mnuRestartAsAdmin" Header="Als Admin neu starten"/>
                 <MenuItem x:Name="mnuRestartAsUser" Header="Als Benutzer neu starten"/>
                 <Separator/>
                 <MenuItem x:Name="mnuCreateShortcut" Header="Desktop-Verknüpfung erstellen"/>
                 <Separator/>
                 <MenuItem x:Name="mnuExit" Header="Beenden"/>
+            </MenuItem>
+            <MenuItem x:Name="mnuWsl" Header="WSL">
+                <MenuItem x:Name="mnuStartWslDebian" Header="WSL Debian Setup öffnen"/>
+                <Separator/>
+                <MenuItem x:Name="mnuWslInstall" Header="WSL installieren"/>
             </MenuItem>
             <MenuItem x:Name="mnuAbout" Header="Über">
                 <MenuItem x:Name="mnuVersion" Header="Version"/>

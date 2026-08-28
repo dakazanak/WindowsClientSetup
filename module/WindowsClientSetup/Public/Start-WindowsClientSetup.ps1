@@ -217,6 +217,7 @@ function Start-WindowsClientSetup {
     $mnuCreateShortcut = $window.FindName('mnuCreateShortcut')
     $mnuExit           = $window.FindName('mnuExit')
     $mnuVersion        = $window.FindName('mnuVersion')
+    $mnuWslInstall     = $window.FindName('mnuWslInstall')
     $txtAdminWarn      = $window.FindName('txtAdminWarn')
     $txtAdminOk        = $window.FindName('txtAdminOk')
 
@@ -299,6 +300,95 @@ function Start-WindowsClientSetup {
     $mnuVersion.Add_Click({
         [Windows.MessageBox]::Show("WindowsClientSetup v$moduleVersion", "Version", 'OK', 'Information') | Out-Null
     })
+
+    function Show-WslInstallDialog {
+        $dlg = [Windows.Window]@{
+            Title = 'WSL installieren'
+            Width = 450; Height = 240
+            WindowStartupLocation = 'CenterOwner'
+            Owner = $window
+            ResizeMode = 'NoResize'
+            WindowStyle = 'ToolWindow'
+        }
+        $dlgGrid = [Windows.Controls.Grid]@{ Margin = [Windows.Thickness]'10' }
+        $dlgGrid.RowDefinitions.Add([Windows.Controls.RowDefinition]@{ Height = [Windows.GridLength]'Auto' })
+        $dlgGrid.RowDefinitions.Add([Windows.Controls.RowDefinition]@{ Height = [Windows.GridLength]'Auto' })
+        $dlgGrid.RowDefinitions.Add([Windows.Controls.RowDefinition]@{ Height = [Windows.GridLength]'Auto' })
+
+        $statusLabel = [Windows.Controls.TextBlock]@{ Text = ''; Margin = [Windows.Thickness]'0,0,0,10'; TextWrapping = 'Wrap' }
+        $statusLabel.SetValue([Windows.Controls.Grid]::RowProperty, 0)
+        $dlgGrid.AddChild($statusLabel)
+
+        $installBtn = [Windows.Controls.Button]@{ Content = 'WSL installieren'; Width = 150; Height = 30; IsEnabled = $false }
+        $installBtn.SetValue([Windows.Controls.Grid]::RowProperty, 1)
+        $dlgGrid.AddChild($installBtn)
+
+        $resultLabel = [Windows.Controls.TextBlock]@{ Text = ''; Margin = [Windows.Thickness]'0,10,0,0'; TextWrapping = 'Wrap' }
+        $resultLabel.SetValue([Windows.Controls.Grid]::RowProperty, 2)
+        $dlgGrid.AddChild($resultLabel)
+
+        if (-not $IsAdmin) {
+            $statusLabel.Text = "Keine Admin-Rechte. Feature-Prüfung nicht möglich.`nBitte das Tool als Administrator neu starten (Datei → Als Admin neu starten)."
+            $statusLabel.Foreground = '#DC3545'
+        } else {
+            $wslFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -ErrorAction SilentlyContinue
+            $vmFeature  = Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -ErrorAction SilentlyContinue
+
+            $wslOk = $wslFeature -and $wslFeature.State -eq 'Enabled'
+            $vmOk  = $vmFeature  -and $vmFeature.State -eq 'Enabled'
+            $wslExe = Get-Command wsl.exe -ErrorAction SilentlyContinue
+
+            if ($wslOk -and $vmOk -and $wslExe) {
+                $statusLabel.Text = "WSL ist bereits installiert.`nFeatures: WSL ($($wslFeature.State)), VirtualMachinePlatform ($($vmFeature.State))"
+                $statusLabel.Foreground = '#28A745'
+            } elseif ($wslOk -and $vmOk) {
+                $statusLabel.Text = "Features sind aktiviert. Klicke auf 'WSL installieren', um WSL zu installieren."
+                $installBtn.IsEnabled = $true
+            } else {
+                $statusLabel.Text = "Erforderliche Windows-Features fehlen:`n"
+                if (-not $wslOk) { $statusLabel.Text += "- Microsoft-Windows-Subsystem-Linux: $(if ($wslFeature) { $wslFeature.State } else { 'nicht gefunden' })`n" }
+                if (-not $vmOk)  { $statusLabel.Text += "- VirtualMachinePlatform: $(if ($vmFeature) { $vmFeature.State } else { 'nicht gefunden' })" }
+                $statusLabel.Foreground = '#DC3545'
+            }
+        }
+
+        $installBtn.Add_Click({
+            $installBtn.IsEnabled = $false
+            $installBtn.Content = 'Installiere ...'
+            $resultLabel.Text = 'wsl --install --no-distribution läuft ...'
+
+            Start-Job -Name "WslInstallJob" -ScriptBlock {
+                $out = wsl --install --no-distribution 2>&1
+                $out | Out-String
+                @{ ExitCode = $LASTEXITCODE }
+            } | Out-Null
+
+            $wslTimer = [System.Windows.Threading.DispatcherTimer]::new()
+            $wslTimer.Interval = [TimeSpan]::FromMilliseconds(500)
+            $wslTimer.Add_Tick({
+                $j = Get-Job -Name "WslInstallJob" -ErrorAction SilentlyContinue
+                if ($j -and $j.State -eq 'Completed') {
+                    $r = Receive-Job -Name "WslInstallJob"
+                    Remove-Job -Name "WslInstallJob"
+                    $wslTimer.Stop()
+                    if ($r.ExitCode -eq 0) {
+                        $resultLabel.Text = 'WSL-Installation abgeschlossen. Bitte Rechner neu starten, falls erforderlich.'
+                        $resultLabel.Foreground = '#28A745'
+                    } else {
+                        $resultLabel.Text = 'Fehler bei der WSL-Installation.'
+                        $resultLabel.Foreground = '#DC3545'
+                    }
+                    $installBtn.Content = 'Fertig'
+                }
+            })
+            $wslTimer.Start()
+        })
+
+        $dlg.Content = $dlgGrid
+        [void]$dlg.ShowDialog()
+    }
+
+    $mnuWslInstall.Add_Click({ Show-WslInstallDialog })
 
     Add-StatusLine -Text "Suche nach installierten Apps ..." -Color '#005A9E'
     $installedIds = @{}

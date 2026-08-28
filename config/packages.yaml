@@ -145,14 +145,17 @@ Entwicklungsumgebung:
         name: Microsoft Edit (Terminal-Texteditor)
         scope: user
         elevated: false
+      - id: astral-sh.uv
+        name: uv
+        scope: user
+        elevated: false
+      - id: MikeFarah.yq
+        name: yq
+        scope: user
+        elevated: false
 
   - group: WSL
     packages:
-      - id: Microsoft.WSL
-        name: Windows-Subsystem für Linux
-        scope: user
-        elevated: true
-        note: "testen:\n dism.exe /online /get-featureinfo /featurename:Microsoft-Windows-Subsystem-Linux\n dism.exe /online /get-featureinfo /featurename:VirtualMachinePlatform\ninstallierenn\n dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart\n dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart\nNeustart ggf. erforderlich"
       - id: Debian.Debian
         name: Debian
         scope: user
