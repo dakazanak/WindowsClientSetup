@@ -52,6 +52,7 @@ function Start-WslDebianSetup {
     $mnuSetPassword = $window.FindName('mnuSetPassword')
     $mnuAptUpgrade = $window.FindName('mnuAptUpgrade')
     $mnuBeenden = $window.FindName('mnuBeenden')
+    $mnuOpenLogs = $window.FindName('mnuOpenLogs')
     $mnuVersion = $window.FindName('mnuVersion')
     $txtPasswordHint = $window.FindName('txtPasswordHint')
 
@@ -536,6 +537,10 @@ function Start-WslDebianSetup {
         Save-WindowConfig
         Stop-Transcript | Out-Null
         $window.Close()
+    })
+
+    $mnuOpenLogs.Add_Click({
+        explorer.exe (Join-Path $DataPath 'logs')
     })
 
     $window.Add_Closing({

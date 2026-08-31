@@ -59,15 +59,15 @@
     <DockPanel>
         <Menu x:Name="mnuMain" DockPanel.Dock="Top" Style="{StaticResource AppMenu}">
             <MenuItem x:Name="mnuFile" Header="Datei">
-                <MenuItem x:Name="mnuStartWindowsSetup" Header="Windows Client Setup öffnen"/>
-                <Separator/>
                 <MenuItem x:Name="mnuSetPassword" Header="sudo-Passwort speichern"/>
-                <Separator/>
                 <MenuItem x:Name="mnuAptUpgrade" Header="apt upgrade ausführen"/>
-                <Separator/>
                 <MenuItem x:Name="mnuInstallSelected" Header="Alle nicht-installierten installieren"/>
+                <MenuItem x:Name="mnuOpenLogs" Header="Logs"/>
                 <Separator/>
                 <MenuItem x:Name="mnuBeenden" Header="Beenden"/>
+            </MenuItem>
+            <MenuItem x:Name="mnuWin" Header="Windows">
+                <MenuItem x:Name="mnuStartWindowsSetup" Header="Windows Client Setup öffnen"/>
             </MenuItem>
             <MenuItem x:Name="mnuAbout" Header="Über">
                 <MenuItem x:Name="mnuVersion" Header="Version"/>

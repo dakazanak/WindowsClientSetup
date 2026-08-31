@@ -217,6 +217,7 @@ function Start-WindowsClientSetup {
     $mnuCreateShortcut = $window.FindName('mnuCreateShortcut')
     $mnuExit           = $window.FindName('mnuExit')
     $mnuVersion        = $window.FindName('mnuVersion')
+    $mnuOpenLogs       = $window.FindName('mnuOpenLogs')
     $mnuWslInstall     = $window.FindName('mnuWslInstall')
     $txtAdminWarn      = $window.FindName('txtAdminWarn')
     $txtAdminOk        = $window.FindName('txtAdminOk')
@@ -295,6 +296,10 @@ function Start-WindowsClientSetup {
     $mnuExit.Add_Click({
         Write-Log -Level 'INFO' -Message "Beenden geklickt"
         Stop-AndClose
+    })
+
+    $mnuOpenLogs.Add_Click({
+        explorer.exe (Join-Path $DataPath 'logs')
     })
 
     $mnuVersion.Add_Click({
